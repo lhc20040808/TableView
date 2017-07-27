@@ -2,6 +2,7 @@ package com.lhc.table;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Canvas;
 import android.support.annotation.Px;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -150,12 +151,13 @@ public class TableView extends ViewGroup {
             child.setLayoutParams(p);
         }
 
-        int childWidthSpec = MeasureSpec.makeMeasureSpec(p.width, MeasureSpec.EXACTLY);
-        int childHeightSpec = MeasureSpec.makeMeasureSpec(p.height, MeasureSpec.EXACTLY);
+        int childWidthSpec = MeasureSpec.makeMeasureSpec(p.width, p.width <= 0 ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
+        int childHeightSpec = MeasureSpec.makeMeasureSpec(p.height, p.height <= 0 ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
         child.measure(childWidthSpec, childHeightSpec);
     }
 
     View obtainView(int row, int column) {
+        Log.d(TAG, "obtainView"+" row:" + row + " column:" + column);
         View scrapView = mRecycler.getScrapView(row, column);
         View child = mAdapter.getView(row, column, scrapView, this);
         if (child == null) {
@@ -265,7 +267,7 @@ public class TableView extends ViewGroup {
         } else if (row == 0 || column == 0) {
             addView(view, getChildCount() - 2);
         } else {
-            addView(view);
+            addView(view,0);
         }
     }
 
@@ -273,33 +275,30 @@ public class TableView extends ViewGroup {
         return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
-//    @Override
-//    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-//        final boolean ret;
-//
-//        final Integer row = (Integer) child.getTag(R.id.row_num);
-//        final Integer column = (Integer) child.getTag(R.id.column_num);
-//        // row == null => Shadow view
-//        if (row == null || (row == -1 && column == -1)) {
-//            ret = super.drawChild(canvas, child, drawingTime);
-//        } else {
-//            canvas.save();
-//            if (row == 0) {
-//                canvas.clipRect(widthOfColumn[0], 0, canvas.getWidth(), canvas.getHeight
-//                        ());
-//            } else if (column == 0) {
-//                canvas.clipRect(0, heightOfRow[0], canvas.getWidth(),
-//                        canvas.getHeight());
-//            } else {
-//                canvas.clipRect(widthOfColumn[0], heightOfRow[0], canvas.getWidth(),
-//                        canvas.getHeight());
-//            }
-//
-//            ret = super.drawChild(canvas, child, drawingTime);
-//            canvas.restore();
-//        }
-//        return ret;
-//    }
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        final boolean result;
+
+        final Integer row = (Integer) child.getTag(R.id.row_num);
+        final Integer column = (Integer) child.getTag(R.id.column_num);
+        if (row == null || (row == 0 && column == 0)) {
+            result = super.drawChild(canvas, child, drawingTime);
+        } else {
+            canvas.save();
+            if (row == 0) {
+                canvas.clipRect(widthOfColumn[0], 0, canvas.getWidth(), canvas.getHeight());
+            } else if (column == 0) {
+                canvas.clipRect(0, heightOfRow[0], canvas.getWidth(), canvas.getHeight());
+            } else {
+                canvas.clipRect(widthOfColumn[0], heightOfRow[0], canvas.getWidth(), canvas.getHeight());
+            }
+
+            result = super.drawChild(canvas, child, drawingTime);
+            canvas.restore();
+        }
+        Log.d(TAG, "drawChild" + " row:" + row + " column:" + column + " result:" + result);
+        return result;
+    }
 
     public void setAdapter(ITableAdapter adapter) {
 
@@ -380,10 +379,13 @@ public class TableView extends ViewGroup {
 
         scrollX += x;
         scrollY += y;
+
+        scrollX = fixScrollDis(scrollX, widthOfColumn, nowColumn, width);
+        scrollY = fixScrollDis(scrollY, heightOfRow, nowRow, height);
+
         if (scrollX < 0) {
 //            Log.d(TAG, "------> scrollX:" + scrollX);
             while (scrollX < 0) {
-                //更新firstColumn
                 nowColumn--;
                 addLeft();
                 scrollX += widthOfColumn[nowColumn];
@@ -409,7 +411,7 @@ public class TableView extends ViewGroup {
         }
 
         if (scrollY > 0) {
-            Log.d(TAG, "屏幕往上划，手指往下划");
+//            Log.d(TAG, "屏幕往上划，手指往下划");
             while (scrollY > heightOfRow[nowRow] + dividerHeight) {
                 if (!columnViewList.isEmpty()) {
                     removeTop();
@@ -424,9 +426,8 @@ public class TableView extends ViewGroup {
             }
 
         } else if (scrollY < 0) {
-            Log.d(TAG, "屏幕往下划，手指往上划");
+//            Log.d(TAG, "屏幕往下划，手指往上划");
             while (scrollY < 0) {
-                //更新firstColumn
                 nowRow--;
                 addTop();
                 scrollY += heightOfRow[nowRow];
@@ -440,6 +441,15 @@ public class TableView extends ViewGroup {
         repositionViews();
     }
 
+    private int fixScrollDis(int scrollDis, int size[], int nowPos, int viewSize) {
+        if (scrollDis > 0) {
+            scrollDis = Math.min(scrollDis, Math.max(0, sumArray(size, nowPos, size.length - nowPos) + size[0] - viewSize));
+        } else if (scrollDis < 0) {
+            scrollDis = Math.max(scrollDis, -sumArray(size, 1, nowPos - 1));
+        }
+        return scrollDis;
+    }
+
     private void addTop() {
         int row = nowRow;
         int index = 0;
@@ -447,8 +457,8 @@ public class TableView extends ViewGroup {
     }
 
     private void addBottom() {
-        int row = nowRow + rowViewList.size();
-        int index = rowViewList.size();
+        int row = nowRow + columnViewList.size();
+        int index = columnViewList.size();
         addRow(row, index);
     }
 
@@ -470,12 +480,12 @@ public class TableView extends ViewGroup {
 
 
         List<View> tmpList = new ArrayList<>();
-        int size = nowColumn + columnViewList.size();
+        int size = nowColumn + rowViewList.size();
         for (int i = nowColumn; i < size; i++) {
             View child = obtainViewAndAddView(row, nowColumn, widthOfColumn[nowColumn], heightOfRow[row]);
             tmpList.add(child);
         }
-        bodyViewList.add(tmpList);
+        bodyViewList.add(index, tmpList);
     }
 
     private void addColumn(int column, int index) {
@@ -492,6 +502,7 @@ public class TableView extends ViewGroup {
 
 
     private void repositionViews() {
+        Log.d(TAG, "repositionViews");
         int left, top, right, bottom;
 
         left = widthOfColumn[0] + dividerHeight - scrollX;
@@ -556,6 +567,8 @@ public class TableView extends ViewGroup {
 
     private void removeRow(int i) {
         removeView(columnViewList.remove(i));
+
+        bodyViewList.remove(i);
     }
 
 
