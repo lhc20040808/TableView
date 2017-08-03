@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.lhc.table.BaseCommonTableAdapter;
 
+import java.util.List;
+
 /**
  * 作者：lhc
  * 时间：2017/7/19.
@@ -18,19 +20,24 @@ import com.lhc.table.BaseCommonTableAdapter;
 
 public class TableAdapter extends BaseCommonTableAdapter {
     private Context context;
+    List<String> listofFirstRow;
+    List<Model> listofFirstColumn;
 
-    public TableAdapter(Context context) {
+
+    public TableAdapter(Context context, List<String> listOfFirstRow, List<Model> listOfFirstColumn) {
         this.context = context;
+        this.listofFirstColumn = listOfFirstColumn;
+        this.listofFirstRow = listOfFirstRow;
     }
 
     @Override
     public int getRow() {
-        return 20;
+        return listofFirstColumn.size();
     }
 
     @Override
     public int getColumn() {
-        return 20;
+        return listofFirstRow.size();
     }
 
     @Override

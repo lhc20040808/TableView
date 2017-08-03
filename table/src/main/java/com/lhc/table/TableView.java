@@ -43,7 +43,7 @@ public class TableView extends ViewGroup {
     private int scrollX;
     private int scrollY;
 
-    private boolean dataChangeFlag;
+    private boolean measureFlag, layoutFlag;
 
     private List<View> rowViewList;
     private List<View> columnViewList;
@@ -103,7 +103,7 @@ public class TableView extends ViewGroup {
         int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        if (width == 0 || height == 0 || dataChangeFlag) {
+        if (width == 0 || height == 0 || measureFlag) {
             //添加或者删除view时都会回调onMeasure，在此防止频繁计算宽高造成卡顿
             if (mAdapter != null) {
 
@@ -121,7 +121,7 @@ public class TableView extends ViewGroup {
                 if (widthSpecMode == MeasureSpec.AT_MOST) {
                     widthSpecSize = Math.min(widthSpecSize, returnWidth);
                 }
-                dataChangeFlag = false;
+                measureFlag = false;
             }
         } else {
             heightSpecSize = height;
@@ -220,7 +220,10 @@ public class TableView extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
-        if (changed) {
+        if (changed || layoutFlag) {
+
+            layoutFlag = false;
+
             int childrenTop = getPaddingTop();
             int childrenBottom = childrenTop + getMeasuredHeight();
             int childCount = getChildCount();
@@ -228,6 +231,11 @@ public class TableView extends ViewGroup {
             int rowCount = mAdapter.getRow();
             rowViewList.clear();
             columnViewList.clear();
+
+            if (columnCount == 0 || rowCount == 0) {
+                //对行列进行校验
+                return;
+            }
 
             makeAndAddView(0, 0, 0, 0, widthOfColumn[0], heightOfRow[0]);//头部View
 
@@ -350,7 +358,8 @@ public class TableView extends ViewGroup {
         nowRow = 0;
         scrollX = 0;
         scrollY = 0;
-        dataChangeFlag = true;
+        measureFlag = true;
+        layoutFlag = true;
         requestLayout();
     }
 
