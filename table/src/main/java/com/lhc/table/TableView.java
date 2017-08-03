@@ -1,6 +1,7 @@
 package com.lhc.table;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.support.annotation.Px;
@@ -58,7 +59,18 @@ public class TableView extends ViewGroup {
 
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initAttrs(context, attrs);
         init();
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TableView);
+
+        int height = (int) a.getDimension(R.styleable.TableView_dividerHeight, 0);
+        if (height != 0) {
+            setDividerHeight(height);
+        }
+        a.recycle();
     }
 
     private void init() {
@@ -67,6 +79,14 @@ public class TableView extends ViewGroup {
         columnViewList = new ArrayList<>();
         bodyViewList = new ArrayList<>();
         this.setWillNotDraw(false);
+    }
+
+    public int getDividerHeight() {
+        return dividerHeight;
+    }
+
+    public void setDividerHeight(int dividerHeight) {
+        this.dividerHeight = dividerHeight;
     }
 
     @Override

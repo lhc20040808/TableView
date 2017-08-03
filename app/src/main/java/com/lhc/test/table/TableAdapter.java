@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.lhc.table.BaseTableAdapter;
+import com.lhc.table.BaseCommonTableAdapter;
 
 /**
  * 作者：lhc
  * 时间：2017/7/19.
  */
 
-public class TableAdapter extends BaseTableAdapter {
+public class TableAdapter extends BaseCommonTableAdapter {
     private Context context;
 
     public TableAdapter(Context context) {
@@ -34,25 +34,55 @@ public class TableAdapter extends BaseTableAdapter {
     }
 
     @Override
-    public View getView(int row, int column, View convertView, ViewGroup parent) {
+    public View getTitleView(View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_table, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_title, parent, false);
         }
         LinearLayout ll_container = (LinearLayout) convertView.findViewById(R.id.ll_container);
         TextView textView = (TextView) convertView.findViewById(R.id.tv_content);
-        textView.setText("行：" + row + " 列:" + column);
-        if (row == 0 && column == 0) {
-            textView.setText("时间\\月份");
-        }
+        textView.setText("Title");
+        return convertView;
+    }
 
-        if (row == 0) {
-            textView.setTextColor(Color.parseColor("#000000"));
-            ll_container.setBackgroundColor(Color.parseColor("#ffffff"));
+    @Override
+    public View getFirstRowView(int column, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_table_first_row, parent, false);
+        }
+        LinearLayout ll_container = (LinearLayout) convertView.findViewById(R.id.ll_container);
+        TextView textView = (TextView) convertView.findViewById(R.id.tv_content);
+        if (column % 2 == 0) {
+            textView.setText("type2");
         } else {
-            textView.setTextColor(Color.parseColor("#ffffff"));
-            ll_container.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.table_bg));
+            textView.setText("type1");
         }
+        return convertView;
+    }
 
+    @Override
+    public View getFirstColumnView(int row, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_table_first_column, parent, false);
+        }
+        LinearLayout ll_container = (LinearLayout) convertView.findViewById(R.id.ll_container);
+        TextView textView = (TextView) convertView.findViewById(R.id.tv_content);
+        TextView textCode = (TextView) convertView.findViewById(R.id.tv_code);
+        textView.setText("Name");
+        textCode.setText("code" + row);
+        return convertView;
+    }
+
+    @Override
+    public View getBodyView(int row, int column, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_body, parent, false);
+        }
+        LinearLayout ll_container = (LinearLayout) convertView.findViewById(R.id.ll_container);
+        TextView textView = (TextView) convertView.findViewById(R.id.tv_content);
+        textView.setText("行:" + row + " 列:" + column);
+
+        textView.setTextColor(Color.parseColor("#ffffff"));
+        ll_container.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.table_bg));
         return convertView;
     }
 
