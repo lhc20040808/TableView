@@ -91,8 +91,8 @@ public class TableView extends ViewGroup {
                 int columnCount = mAdapter.getColumn();
                 widthOfColumn = new int[columnCount];
                 heightOfRow = new int[rowCount];
-                int returnHeight = measureHeightOfChildren(0, NO_POSITION);
                 int returnWidth = measureWidthOfChildren(0, NO_POSITION);
+                int returnHeight = measureHeightOfChildren(0, NO_POSITION);
 
                 if (heightSpecMode == MeasureSpec.AT_MOST) {
                     heightSpecSize = Math.min(heightSpecSize, returnHeight);
@@ -117,12 +117,17 @@ public class TableView extends ViewGroup {
         int returnWidth = 0;
         for (int i = startColumn; i < endColumn; i++) {
             View child = obtainView(0, i);
-            measureScrapChild(child);
-            widthOfColumn[i] = child.getMeasuredWidth();
+            LayoutParams p = child.getLayoutParams();
+            if (p == null || p.width == 0) {
+                measureScrapChild(child);
+                widthOfColumn[i] = child.getMeasuredWidth();
+            } else {
+                widthOfColumn[i] = p.width;
+            }
             if (i > 0) {
                 returnWidth += dividerHeight;
             }
-            returnWidth += child.getMeasuredWidth();
+            returnWidth += widthOfColumn[i];
         }
         return returnWidth;
     }
@@ -133,13 +138,18 @@ public class TableView extends ViewGroup {
         int returnHeight = 0;
         for (int i = startRow; i < endRow; i++) {
             View child = obtainView(i, 0);
-            measureScrapChild(child);
-            heightOfRow[i] = child.getMeasuredHeight();
+            LayoutParams p = child.getLayoutParams();
+            if (p == null || p.height == 0) {
+                measureScrapChild(child);
+                heightOfRow[i] = child.getMeasuredHeight();
+            } else {
+                heightOfRow[i] = p.height;
+            }
             if (i > 0) {
                 returnHeight += dividerHeight;
             }
 
-            returnHeight += child.getMeasuredHeight();
+            returnHeight += heightOfRow[i];
         }
         return returnHeight;
     }
@@ -157,7 +167,6 @@ public class TableView extends ViewGroup {
     }
 
     View obtainView(int row, int column) {
-        Log.d(TAG, "obtainView"+" row:" + row + " column:" + column);
         View scrapView = mRecycler.getScrapView(row, column);
         View child = mAdapter.getView(row, column, scrapView, this);
         if (child == null) {
@@ -267,7 +276,7 @@ public class TableView extends ViewGroup {
         } else if (row == 0 || column == 0) {
             addView(view, getChildCount() - 2);
         } else {
-            addView(view,0);
+            addView(view, 0);
         }
     }
 
@@ -364,6 +373,12 @@ public class TableView extends ViewGroup {
                 int diffX = downX - x2;
                 int diffY = downY - y2;
 
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    diffY = 0;
+                } else {
+                    diffX = 0;
+                }
+
                 scrollBy(diffX, diffY);
                 downX = x2;
                 downY = y2;
@@ -391,7 +406,7 @@ public class TableView extends ViewGroup {
                 scrollX += widthOfColumn[nowColumn];
             }
 
-            while (getFilledWidth() - widthOfColumn[nowColumn + rowViewList.size()] >= width) {
+            while (getFilledWidth() - widthOfColumn[nowColumn + rowViewList.size() - 1] >= width) {
                 removeRight();
             }
 
@@ -411,7 +426,7 @@ public class TableView extends ViewGroup {
         }
 
         if (scrollY > 0) {
-//            Log.d(TAG, "屏幕往上划，手指往下划");
+
             while (scrollY > heightOfRow[nowRow] + dividerHeight) {
                 if (!columnViewList.isEmpty()) {
                     removeTop();
@@ -426,14 +441,13 @@ public class TableView extends ViewGroup {
             }
 
         } else if (scrollY < 0) {
-//            Log.d(TAG, "屏幕往下划，手指往上划");
             while (scrollY < 0) {
                 nowRow--;
                 addTop();
                 scrollY += heightOfRow[nowRow];
             }
 
-            while (getFilledHeight() - heightOfRow[nowRow + columnViewList.size()] >= height) {
+            while (getFilledHeight() - heightOfRow[nowRow + columnViewList.size() - 1] >= height) {
                 removeBottom();
             }
         }
@@ -568,7 +582,10 @@ public class TableView extends ViewGroup {
     private void removeRow(int i) {
         removeView(columnViewList.remove(i));
 
-        bodyViewList.remove(i);
+        List<View> list = bodyViewList.remove(i);
+        for (View view : list) {
+            removeView(view);
+        }
     }
 
 

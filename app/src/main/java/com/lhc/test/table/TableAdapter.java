@@ -25,12 +25,12 @@ public class TableAdapter extends BaseTableAdapter {
 
     @Override
     public int getRow() {
-        return 1000;
+        return 20;
     }
 
     @Override
     public int getColumn() {
-        return 1000;
+        return 20;
     }
 
     @Override
