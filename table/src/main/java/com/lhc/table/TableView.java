@@ -753,4 +753,10 @@ public class TableView extends ViewGroup {
 
         }
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        removeCallbacks(mFling);
+    }
 }
