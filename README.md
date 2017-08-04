@@ -200,4 +200,4 @@ onMeasure`
 
 首先测量控件宽高，实现onMeasure方法，对ViewGroup的宽高设置无非就是match_parent(MeasureSpec.EXACTLY)，wrap_content(MeasureSpec.AT_MOST)。加载的时候如果行列数过多会该方法执行时间过长，产生卡顿，因为要在onMeasure中取每个子View的宽高保存到数组中。
 
-//TODO to be continue
+//TODO to be continued
