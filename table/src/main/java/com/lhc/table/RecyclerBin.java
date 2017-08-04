@@ -24,6 +24,10 @@ public class RecyclerBin {
         setViewTypeCount(adapter.getViewTypeCount());
     }
 
+    /**
+     * 设置View的类型数量
+     * @param viewTypeCount
+     */
     private void setViewTypeCount(int viewTypeCount) {
         if (viewTypeCount < 1) {
             throw new IllegalArgumentException("viewTypeCount 不能小于1");
@@ -39,6 +43,12 @@ public class RecyclerBin {
         this.viewTypeCount = viewTypeCount;
     }
 
+    /**
+     * 获取回收池中的View
+     * @param row 行数
+     * @param column 列数
+     * @return
+     */
     View getScrapView(int row, int column) {
         int type = mAdapter.getItemViewType(row, column);
         checkTypeValue(type);
@@ -56,6 +66,11 @@ public class RecyclerBin {
         }
     }
 
+    /**
+     * 获取栈顶的View
+     * @param mScrapView
+     * @return
+     */
     private View retrieveFromScrap(Stack<View> mScrapView) {
         if (!mScrapView.isEmpty()) {
             return mScrapView.pop();
@@ -64,6 +79,12 @@ public class RecyclerBin {
         }
     }
 
+    /**
+     * 将View加入回收池
+     * @param view
+     * @param row 行数
+     * @param column 列数
+     */
     void addScrapView(View view, int row, int column) {
         int type = mAdapter.getItemViewType(row, column);
         checkTypeValue(type);
