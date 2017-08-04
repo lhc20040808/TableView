@@ -12,6 +12,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.Scroller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,11 @@ public class TableView extends ViewGroup {
     private List<View> columnViewList;
     private List<List<View>> bodyViewList;
 
+    private int maxVelocity;
+    private int minVelocity;
+
+    private Fling mFling;
+
     public TableView(Context context) {
         this(context, null);
     }
@@ -74,10 +80,14 @@ public class TableView extends ViewGroup {
     }
 
     private void init() {
-        touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        ViewConfiguration viewConfiguration = ViewConfiguration.get(getContext());
+        touchSlop = viewConfiguration.getScaledTouchSlop();
+        maxVelocity = viewConfiguration.getScaledMaximumFlingVelocity();
+        minVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
         rowViewList = new ArrayList<>();
         columnViewList = new ArrayList<>();
         bodyViewList = new ArrayList<>();
+        mFling = new Fling(getContext());
         this.setWillNotDraw(false);
     }
 
@@ -333,7 +343,7 @@ public class TableView extends ViewGroup {
             result = super.drawChild(canvas, child, drawingTime);
             canvas.restore();
         }
-        Log.d(TAG, "drawChild" + " row:" + row + " column:" + column + " result:" + result);
+//        Log.d(TAG, "drawChild" + " row:" + row + " column:" + column + " result:" + result);
         return result;
     }
 
@@ -366,7 +376,6 @@ public class TableView extends ViewGroup {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean intercept = false;
-
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = (int) ev.getRawX();
@@ -393,6 +402,10 @@ public class TableView extends ViewGroup {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (mFling.isRunning()) {
+                    mFling.stop();
+                }
+
                 downX = (int) event.getRawX();
                 downY = (int) event.getRawY();
                 break;
@@ -413,6 +426,14 @@ public class TableView extends ViewGroup {
                 downY = y2;
                 break;
             case MotionEvent.ACTION_UP:
+                velocityTracker.computeCurrentVelocity(1000, maxVelocity);
+                int xVelocity = (int) velocityTracker.getXVelocity();
+                int yVelocity = (int) velocityTracker.getYVelocity();
+                Log.d(TAG, "x:" + xVelocity);
+                Log.d(TAG, "y:" + yVelocity);
+                if (Math.abs(xVelocity) > minVelocity || Math.abs(yVelocity) > minVelocity) {
+                    mFling.start(getActualScrollX(), getActualScrollY(), xVelocity, yVelocity, getMaxScrollX(), getMaxScrollY());
+                }
                 break;
         }
         return true;
@@ -545,7 +566,6 @@ public class TableView extends ViewGroup {
 
 
     private void repositionViews() {
-        Log.d(TAG, "repositionViews");
         int left, top, right, bottom;
 
         left = widthOfColumn[0] + dividerHeight - scrollX;
@@ -598,6 +618,13 @@ public class TableView extends ViewGroup {
         return sum;
     }
 
+    @Override
+    public void removeView(View view) {
+        super.removeView(view);
+        final Integer row = (Integer) view.getTag(R.id.row_num);
+        final Integer column = (Integer) view.getTag(R.id.column_num);
+        mRecycler.addScrapView(view, row, column);
+    }
 
     private void removeTop() {
         removeRow(0);
@@ -634,6 +661,22 @@ public class TableView extends ViewGroup {
         }
     }
 
+    private int getActualScrollY() {
+        return scrollY + sumArray(heightOfRow, 1, nowRow - 1);
+    }
+
+    private int getActualScrollX() {
+        return scrollX + sumArray(widthOfColumn, 1, nowColumn - 1);
+    }
+
+    private int getMaxScrollX() {
+        return Math.max(0, sumArray(widthOfColumn, 1, widthOfColumn.length - 1) - width);
+    }
+
+    private int getMaxScrollY() {
+        return Math.max(0, sumArray(heightOfRow, 1, heightOfRow.length - 1) - height);
+    }
+
 
     class TableDataObserver extends DataSetObserver {
 
@@ -642,6 +685,72 @@ public class TableView extends ViewGroup {
         public void onChanged() {
             super.onChanged();
             initData();
+        }
+    }
+
+    private class Fling implements Runnable {
+        private Scroller scroller;
+        private int lastX;
+        private int lastY;
+
+        public Fling(Context context) {
+            this.scroller = new Scroller(context);
+        }
+
+        void start(int startX, int startY,
+                   int velocityX, int velocityY,
+                   int maxX, int maxY) {
+
+            if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                //横向滑动
+                velocityY = 0;
+            } else {
+                //纵向滑动
+                velocityX = 0;
+            }
+
+            scroller.fling(startX, startY, velocityX, velocityY, 0, maxX, 0, maxY);
+            lastX = startX;
+            lastY = startY;
+            post(this);
+        }
+
+        boolean isRunning() {
+            return !scroller.isFinished();
+        }
+
+        void stop() {
+            scroller.forceFinished(true);
+        }
+
+        @Override
+        public void run() {
+            if (scroller.isFinished()) {
+                return;
+            }
+
+            boolean more = scroller.computeScrollOffset();
+            int x = scroller.getCurrX();
+            int y = scroller.getCurrY();
+
+            int diffX = lastX - x;
+            int diffY = lastY - y;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                diffY = 0;
+            } else {
+                diffX = 0;
+            }
+            if(diffX != 0 || diffY !=0){
+                scrollBy(diffX, diffY);
+                lastX = x;
+                lastY = y;
+            }
+
+            if (more) {
+                post(this);
+            }
+
         }
     }
 }

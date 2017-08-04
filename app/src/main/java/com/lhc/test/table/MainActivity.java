@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Log.d("Table","获取数据");
             Model tmp = null;
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 30; i++) {
                 tmp = new Model();
                 tmp.setName("Name" + i);
                 tmp.setDes("des" + i);
