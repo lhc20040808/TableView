@@ -2,11 +2,11 @@
 
 最近正好学到自定义TableView，也简单了解了一下其他可能的实现方式。
 
-可以首行，首列和内容区域分别用三个recyclerView来实现TableView。
+1、首行，首列和内容区域分别用三个recyclerView来实现TableView。
 
-也有公司用ListView，在item中套自定义控件来实现效果。
+2、ListView在item中套滑动控件并通过联动来实现效果。
 
-不讨论以上思路的好坏，这里采用完全自定义ViewGroup的方式实现一个TableView。
+这里采用完全自定义ViewGroup的方式实现一个TableView。
 
 ## 如何使用
 
@@ -200,4 +200,3 @@ onMeasure`
 
 首先测量控件宽高，实现onMeasure方法，对ViewGroup的宽高设置无非就是match_parent(MeasureSpec.EXACTLY)，wrap_content(MeasureSpec.AT_MOST)。加载的时候如果行列数过多会该方法执行时间过长，产生卡顿，因为要在onMeasure中取每个子View的宽高保存到数组中。
 
-//TODO to be continued
