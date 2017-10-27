@@ -10,11 +10,7 @@
 
 ## 如何使用
 
-先来看看实现后的效果，录频之后有点失真。
-
-//TODO 支持首行或者首列不显示
-
-//TODO 可以绘制divider
+#### DEMO
 
 ![TableView](https://raw.githubusercontent.com/lhc20040808/Pictures/master/res/图片/table_view_gif.gif)
 
@@ -22,9 +18,15 @@
 
 目前提供两个抽象的适配器`BaseCommonTableAdapter`和`BaseTableAdapter`。用户可以继承这两个适配器，也可以自己实现`ITableAdapter`接口。
 
-使用步骤
+#### 使用步骤
 
-1、实现一个适配器，使用方式很接近`ListView#adapter`
+1、最新版本都会发布到jcenter中
+
+```groovy
+compile 'com.lhc:TableView:1.0.0'
+```
+
+2、实现一个适配器，使用方式很接近`ListView#adapter`
 
 ```java
 public class TableAdapter extends BaseCommonTableAdapter {
@@ -106,97 +108,21 @@ public class TableAdapter extends BaseCommonTableAdapter {
 }
 ```
 
-2、设置适配器
+3、设置适配器
 
 ```java
   tableView = (TableView) findViewById(R.id.tableView);
   tableView.setAdapter(adapter);
 ```
 
-3、更新数据
+4、更新数据
 
 ```
 adapter.notifyDateSetChange();
 ```
 
+#### TODO
 
+//TODO 支持首行或者首列不显示
 
-## 如何实现
-
-#### 实现一个回收池
-
-回收池的实现也很简单，采用栈来存储回收的View，不同类型的View存储在不同的栈中。所以我们要做以下几步。
-
-根据类型数量构造相同数量的栈，每个栈对应一个类型的View
-
-根据类型将View添加进回收池
-
-根据类型从相应的栈中取出之前回收的View
-
-```java
-    /**
-     * 设置View的类型数量
-     * @param viewTypeCount
-     */
-    private void setViewTypeCount(int viewTypeCount) {
-        if (viewTypeCount < 1) {
-            throw new IllegalArgumentException("viewTypeCount 不能小于1");
-        }
-
-        Stack<View>[] scrapViews = new Stack[viewTypeCount];
-
-        for (int i = 0; i < viewTypeCount; i++) {
-            scrapViews[i] = new Stack<>();
-        }
-
-        this.mScrapViews = scrapViews;
-        this.viewTypeCount = viewTypeCount;
-    }
-
-    /**
-     * 获取回收池中的View
-     * @param row 行数
-     * @param column 列数
-     * @return
-     */
-    View getScrapView(int row, int column) {
-        int type = mAdapter.getItemViewType(row, column);
-        checkTypeValue(type);
-
-        return retrieveFromScrap(mScrapViews[type]);
-    }
-
-    /**
-     * 获取栈顶的View
-     * @param mScrapView
-     * @return
-     */
-    private View retrieveFromScrap(Stack<View> mScrapView) {
-        if (!mScrapView.isEmpty()) {
-            return mScrapView.pop();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 将View加入回收池
-     * @param view
-     * @param row 行数
-     * @param column 列数
-     */
-    void addScrapView(View view, int row, int column) {
-        int type = mAdapter.getItemViewType(row, column);
-        checkTypeValue(type);
-        mScrapViews[type].add(view);
-    }
-```
-
-
-
-#### 实现一个ViewGroup
-
-onMeasure`
-
-首先测量控件宽高，实现onMeasure方法，对ViewGroup的宽高设置无非就是match_parent(MeasureSpec.EXACTLY)，wrap_content(MeasureSpec.AT_MOST)。加载的时候如果行列数过多会该方法执行时间过长，产生卡顿，因为要在onMeasure中取每个子View的宽高保存到数组中。
-
+//TODO 可以绘制divider
