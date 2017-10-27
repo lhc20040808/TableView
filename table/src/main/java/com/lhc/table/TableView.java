@@ -237,68 +237,70 @@ public class TableView extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
         if (changed || layoutFlag) {
+            if (mAdapter != null) {
 
-            layoutFlag = false;
+                layoutFlag = false;
 
-            int childrenTop = getPaddingTop();
-            int childrenBottom = childrenTop + getMeasuredHeight();
-            int childCount = getChildCount();
-            int columnCount = mAdapter.getColumn();
-            int rowCount = mAdapter.getRow();
-            rowViewList.clear();
-            columnViewList.clear();
-            bodyViewList.clear();
+                int childrenTop = getPaddingTop();
+                int childrenBottom = childrenTop + getMeasuredHeight();
+                int childCount = getChildCount();
+                int columnCount = mAdapter.getColumn();
+                int rowCount = mAdapter.getRow();
+                rowViewList.clear();
+                columnViewList.clear();
+                bodyViewList.clear();
 
-            if (columnCount == 0 || rowCount == 0) {
-                //对行列进行校验
-                return;
-            }
+                if (columnCount == 0 || rowCount == 0) {
+                    //对行列进行校验
+                    return;
+                }
 
-            makeAndAddView(0, 0, 0, 0, widthOfColumn[0], heightOfRow[0]);//头部View
+                makeAndAddView(0, 0, 0, 0, widthOfColumn[0], heightOfRow[0]);//头部View
 
-            int left = widthOfColumn[0] + dividerHeight - scrollX;
-            int top = heightOfRow[0] + dividerHeight - scrollY;
-            int right = 0;
-            int bottom = 0;
+                int left = widthOfColumn[0] + dividerHeight - scrollX;
+                int top = heightOfRow[0] + dividerHeight - scrollY;
+                int right = 0;
+                int bottom = 0;
 
-            if (nowRow == 0) {
-                nowRow = 1;
-            }
+                if (nowRow == 0) {
+                    nowRow = 1;
+                }
 
-            if (nowColumn == 0) {
-                nowColumn = 1;
-            }
+                if (nowColumn == 0) {
+                    nowColumn = 1;
+                }
 
-            //添加首行View
-            for (int i = nowColumn; i < columnCount && left < width; i++) {
-                right = left + widthOfColumn[nowColumn];
-                View view = makeAndAddView(0, i, left, 0, right, heightOfRow[0]);
-                rowViewList.add(view);
-                left = right + dividerHeight;
-            }
-
-            //添加首列View
-            for (int i = nowRow; i < rowCount && top < height; i++) {
-                bottom = top + heightOfRow[nowColumn];
-                View view = makeAndAddView(i, 0, 0, top, widthOfColumn[0], bottom);
-                columnViewList.add(view);
-                top = bottom + dividerHeight;
-            }
-
-            //添加BodyView
-            top = heightOfRow[0] + dividerHeight - scrollY;
-            for (int i = nowRow; i < rowCount && top < height; i++) {
-                bottom = top + heightOfRow[nowRow];
-                left = widthOfColumn[0] + dividerHeight - scrollX;
-                List<View> tmpRowViewList = new ArrayList<>();
-                for (int j = nowColumn; j < columnCount && left < width; j++) {
+                //添加首行View
+                for (int i = nowColumn; i < columnCount && left < width; i++) {
                     right = left + widthOfColumn[nowColumn];
-                    View view = makeAndAddView(i, j, left, top, right, bottom);
-                    tmpRowViewList.add(view);
+                    View view = makeAndAddView(0, i, left, 0, right, heightOfRow[0]);
+                    rowViewList.add(view);
                     left = right + dividerHeight;
                 }
-                top = bottom + dividerHeight;
-                bodyViewList.add(tmpRowViewList);
+
+                //添加首列View
+                for (int i = nowRow; i < rowCount && top < height; i++) {
+                    bottom = top + heightOfRow[nowColumn];
+                    View view = makeAndAddView(i, 0, 0, top, widthOfColumn[0], bottom);
+                    columnViewList.add(view);
+                    top = bottom + dividerHeight;
+                }
+
+                //添加BodyView
+                top = heightOfRow[0] + dividerHeight - scrollY;
+                for (int i = nowRow; i < rowCount && top < height; i++) {
+                    bottom = top + heightOfRow[nowRow];
+                    left = widthOfColumn[0] + dividerHeight - scrollX;
+                    List<View> tmpRowViewList = new ArrayList<>();
+                    for (int j = nowColumn; j < columnCount && left < width; j++) {
+                        right = left + widthOfColumn[nowColumn];
+                        View view = makeAndAddView(i, j, left, top, right, bottom);
+                        tmpRowViewList.add(view);
+                        left = right + dividerHeight;
+                    }
+                    top = bottom + dividerHeight;
+                    bodyViewList.add(tmpRowViewList);
+                }
             }
         }
 
