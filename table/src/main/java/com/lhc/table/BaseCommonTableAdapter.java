@@ -57,13 +57,27 @@ public abstract class BaseCommonTableAdapter implements ITableAdapter {
         if (row == 0 && column == 0) {
             return getTitleView(convertView, parent);
         } else if (row == 0) {
-            return getFirstRowView(column, convertView, parent);
+            return getFirstRowView(column - 1, convertView, parent);
         } else if (column == 0) {
-            return getFirstColumnView(row, convertView, parent);
+            return getFirstColumnView(row - 1, convertView, parent);
         } else {
-            return getBodyView(row, column, convertView, parent);
+            return getBodyView(row - 1, column - 1, convertView, parent);
         }
     }
+
+    @Override
+    public final int getRow() {
+        return getBodyRow() + 1;
+    }
+
+    @Override
+    public final int getColumn() {
+        return getBodyColumn() + 1;
+    }
+
+    public abstract int getBodyColumn();
+
+    public abstract int getBodyRow();
 
     public abstract View getTitleView(View convertView, ViewGroup parent);
 

@@ -6,7 +6,6 @@ import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.support.annotation.Px;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -114,13 +113,21 @@ public class TableView extends ViewGroup {
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 
         if (width == 0 || height == 0 || measureFlag) {
+
             //添加或者删除view时都会回调onMeasure，在此防止频繁计算宽高造成卡顿
             if (mAdapter != null) {
 
                 int rowCount = mAdapter.getRow();
                 int columnCount = mAdapter.getColumn();
-                widthOfColumn = new int[columnCount];
-                heightOfRow = new int[rowCount];
+
+                if (widthOfColumn == null || widthOfColumn.length != columnCount) {
+                    widthOfColumn = new int[columnCount];
+                }
+
+                if (heightOfRow == null || heightOfRow.length != rowCount) {
+                    heightOfRow = new int[rowCount];
+                }
+
                 int returnWidth = measureWidthOfChildren(0, NO_POSITION);
                 int returnHeight = measureHeightOfChildren(0, NO_POSITION);
 
@@ -137,7 +144,6 @@ public class TableView extends ViewGroup {
             heightSpecSize = height;
             widthSpecSize = width;
         }
-
 
         setMeasuredDimension(widthSpecSize, heightSpecSize);
     }
@@ -241,6 +247,7 @@ public class TableView extends ViewGroup {
             int rowCount = mAdapter.getRow();
             rowViewList.clear();
             columnViewList.clear();
+            bodyViewList.clear();
 
             if (columnCount == 0 || rowCount == 0) {
                 //对行列进行校验
@@ -343,7 +350,6 @@ public class TableView extends ViewGroup {
             result = super.drawChild(canvas, child, drawingTime);
             canvas.restore();
         }
-//        Log.d(TAG, "drawChild" + " row:" + row + " column:" + column + " result:" + result);
         return result;
     }
 
@@ -370,6 +376,7 @@ public class TableView extends ViewGroup {
         scrollY = 0;
         measureFlag = true;
         layoutFlag = true;
+        removeAllViews();
         requestLayout();
     }
 
@@ -420,7 +427,6 @@ public class TableView extends ViewGroup {
                 } else {
                     diffX = 0;
                 }
-
                 scrollBy(diffX, diffY);
                 downX = x2;
                 downY = y2;
@@ -429,8 +435,6 @@ public class TableView extends ViewGroup {
                 velocityTracker.computeCurrentVelocity(1000, maxVelocity);
                 int xVelocity = (int) velocityTracker.getXVelocity();
                 int yVelocity = (int) velocityTracker.getYVelocity();
-                Log.d(TAG, "x:" + xVelocity);
-                Log.d(TAG, "y:" + yVelocity);
                 if (Math.abs(xVelocity) > minVelocity || Math.abs(yVelocity) > minVelocity) {
                     mFling.start(getActualScrollX(), getActualScrollY(), xVelocity, yVelocity, getMaxScrollX(), getMaxScrollY());
                 }
@@ -441,7 +445,6 @@ public class TableView extends ViewGroup {
 
     @Override
     public void scrollBy(@Px int x, @Px int y) {
-
         scrollX += x;
         scrollY += y;
 
@@ -476,7 +479,7 @@ public class TableView extends ViewGroup {
         }
 
         if (scrollY > 0) {
-
+//            Log.d(TAG, "↓↓↓↓↓ scrollY:" + scrollY);
             while (scrollY > heightOfRow[nowRow] + dividerHeight) {
                 if (!columnViewList.isEmpty()) {
                     removeTop();
@@ -491,6 +494,7 @@ public class TableView extends ViewGroup {
             }
 
         } else if (scrollY < 0) {
+//            Log.d(TAG, "↑↑↑↑↑ scrollY:" + scrollY);
             while (scrollY < 0) {
                 nowRow--;
                 addTop();
@@ -741,7 +745,7 @@ public class TableView extends ViewGroup {
             } else {
                 diffX = 0;
             }
-            if(diffX != 0 || diffY !=0){
+            if (diffX != 0 || diffY != 0) {
                 scrollBy(diffX, diffY);
                 lastX = x;
                 lastY = y;

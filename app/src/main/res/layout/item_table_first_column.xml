@@ -5,7 +5,7 @@
     android:layout_height="60dp"
     android:background="#ffffff"
     android:gravity="center"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="1dp">
 
 
@@ -13,8 +13,9 @@
         android:id="@+id/tv_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
         android:gravity="center"
-        android:text="测试"
+        android:text="Name"
         android:textColor="#353535"
         android:textSize="12sp" />
 
