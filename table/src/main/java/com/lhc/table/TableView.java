@@ -372,10 +372,27 @@ public class TableView extends ViewGroup {
     }
 
     private void initData() {
-        nowColumn = 0;
-        nowRow = 0;
-        scrollX = 0;
-        scrollY = 0;
+
+        if (mAdapter == null) {
+            nowColumn = 0;
+            nowRow = 0;
+            scrollX = 0;
+            scrollY = 0;
+        } else {
+            int columnCount = mAdapter.getColumn();
+            int rowCount = mAdapter.getRow();
+
+            if (nowColumn + rowViewList.size() > columnCount) {
+                nowColumn = 0;
+                scrollX = 0;
+            }
+            if (nowRow + columnViewList.size() > rowCount) {
+                nowRow = 0;
+                scrollY = 0;
+            }
+        }
+
+
         measureFlag = true;
         layoutFlag = true;
         removeAllViews();
