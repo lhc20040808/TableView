@@ -30,6 +30,26 @@
             android:text="减数据"
             android:textSize="14sp"
             android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_check_vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="checkVertical"
+            android:text="检查纵向滚动"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_check_horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="checkHorizontal"
+            android:text="检查横向滚动"
+            android:textSize="12sp"
+            android:visibility="visible" />
     </LinearLayout>
 
     <com.lhc.table.TableView

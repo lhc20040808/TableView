@@ -2,6 +2,7 @@ package com.lhc.test.table;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.lhc.table.TableView;
@@ -29,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
         listofFirstRow.add("二月收益");
         listofFirstRow.add("三月收益");
         listofFirstRow.add("四月收益");
-        listofFirstRow.add("五月收益");
-        listofFirstRow.add("六月收益");
+//        listofFirstRow.add("五月收益");
+//        listofFirstRow.add("六月收益");
+//        listofFirstRow.add("七月收益");
 
         Model tmp = null;
         for (int i = 0; i < 15; i++) {
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             tmp.setRevenueApr(r.nextInt(10) * 1.0);
             tmp.setRevenueMay(r.nextInt(10) * 1.0);
             tmp.setRevenueJune(r.nextInt(10) * 1.0);
+            tmp.setRevenueJuly(r.nextInt(10) * 1.0);
             listOfDatas.add(tmp);
         }
 
@@ -54,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
     public void sort(View view) {
         Collections.sort(listOfDatas, TableAdapter.sort(3));
         mAdapter.notifyDateSetChange();
+    }
+
+    public void checkVertical(View view) {
+        Log.d("testlhc", "能否向上滑动:" + tableView.canScrollVertically(-1));
+        Log.d("testlhc", "能否向下滑动:" + tableView.canScrollVertically(1));
+    }
+
+    public void checkHorizontal(View view) {
+        Log.d("testlhc", "能否向左滑动:" + tableView.canScrollHorizontally(-1));
+        Log.d("testlhc", "能否向右滑动:" + tableView.canScrollHorizontally(1));
     }
 
     public void add(View view) {
@@ -69,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             tmp.setRevenueApr(r.nextInt(10) * 1.0);
             tmp.setRevenueMay(r.nextInt(10) * 1.0);
             tmp.setRevenueJune(r.nextInt(10) * 1.0);
+            tmp.setRevenueJuly(r.nextInt(10) * 1.0);
             listOfDatas.add(tmp);
         }
 

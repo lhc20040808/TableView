@@ -6,6 +6,7 @@ import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.support.annotation.Px;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -455,6 +456,7 @@ public class TableView extends ViewGroup {
                 int xVelocity = (int) velocityTracker.getXVelocity();
                 int yVelocity = (int) velocityTracker.getYVelocity();
                 if (Math.abs(xVelocity) > minVelocity || Math.abs(yVelocity) > minVelocity) {
+                    Log.d("testlhc", "maxScrollX:" + getMaxScrollX() + " actualScrollX:" + getActualScrollX());
                     mFling.start(getActualScrollX(), getActualScrollY(), xVelocity, yVelocity, getMaxScrollX(), getMaxScrollY());
                 }
                 break;
@@ -693,11 +695,95 @@ public class TableView extends ViewGroup {
     }
 
     private int getMaxScrollX() {
-        return Math.max(0, sumArray(widthOfColumn, 1, widthOfColumn.length - 1) - width);
+        return Math.max(0, sumArray(widthOfColumn, 0, widthOfColumn.length) - width);
+    }
+
+    /**
+     * 判断纵向能否滚动
+     *
+     * @param direction 负数时判断还能否向上滚动，正数时判断能否向下滚动
+     * @return
+     */
+    public boolean canScrollVertically(int direction) {
+
+        if (mAdapter == null)
+            return false;
+
+        if (columnViewList == null || columnViewList.size() == 0)
+            return false;
+
+        if (heightOfRow == null || heightOfRow.length == 0)
+            return false;
+
+        final int rowCount = mAdapter.getRow();
+
+        if (direction < 0) {
+
+            View view = columnViewList.get(0);
+            if (view == null)
+                return false;
+
+            if (nowRow == 1 && columnViewList.get(0).getTop() == heightOfRow[0] + dividerHeight) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } else {
+
+            if (nowRow + columnViewList.size() == rowCount && getFilledHeight() == height) {
+                return false;
+            } else {
+                return true;
+            }
+
+        }
+    }
+
+    /**
+     * 判断纵向能否滚动
+     *
+     * @param direction 负数时判断还能否向左滚动，正数时判断能否向右滚动
+     * @return
+     */
+    public boolean canScrollHorizontally(int direction) {
+
+        if (mAdapter == null)
+            return false;
+
+        if (rowViewList == null || rowViewList.size() == 0)
+            return false;
+
+        if (widthOfColumn == null || widthOfColumn.length == 0)
+            return false;
+
+        final int columnCount = mAdapter.getColumn();
+
+        if (direction < 0) {
+
+            View view = rowViewList.get(0);
+            if (view == null)
+                return false;
+
+            if (nowColumn == 1 && rowViewList.get(0).getLeft() == widthOfColumn[0] + dividerHeight) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } else {
+
+            if (nowColumn + rowViewList.size() == columnCount && getFilledWidth() == width) {
+                return false;
+            } else {
+                return true;
+            }
+
+        }
     }
 
     private int getMaxScrollY() {
-        return Math.max(0, sumArray(heightOfRow, 1, heightOfRow.length - 1) - height);
+        return Math.max(0, sumArray(heightOfRow, 0, heightOfRow.length) - height);
     }
 
 
@@ -755,10 +841,12 @@ public class TableView extends ViewGroup {
             boolean more = scroller.computeScrollOffset();
             int x = scroller.getCurrX();
             int y = scroller.getCurrY();
-
             int diffX = lastX - x;
             int diffY = lastY - y;
 
+//            Log.d("testlhc", "X:" + x + " Y:" + y);
+//            Log.d("testlhc", "lastX:" + lastX + " lastY:" + lastY);
+//            Log.d("testlhc", "diffX:" + diffX + " diffY:" + diffY);
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 diffY = 0;
             } else {
