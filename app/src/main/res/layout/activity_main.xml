@@ -8,7 +8,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <Button
@@ -17,8 +18,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="add"
-            android:text="加数据"
-            android:textSize="14sp"
+            android:text="增加数据"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_change"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="change"
+            android:text="更换数据"
+            android:textSize="12sp"
             android:visibility="visible" />
 
         <Button
@@ -27,8 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="sub"
-            android:text="减数据"
-            android:textSize="14sp"
+            android:text="删除数据"
+            android:textSize="12sp"
             android:visibility="visible" />
 
         <Button

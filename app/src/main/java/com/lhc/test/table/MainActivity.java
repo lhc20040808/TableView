@@ -89,6 +89,27 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.notifyDateSetChange();
     }
 
+    public void change(View view) {
+        final int size = listOfDatas.size();
+        listOfDatas.clear();
+        Model tmp = null;
+        for (int i = 0; i < size; i++) {
+            tmp = new Model();
+            tmp.setName("Change" + i);
+            tmp.setDes("Cdes" + i);
+            tmp.setNet(r.nextInt(10) * 1.0);
+            tmp.setRevenueJan(r.nextInt(10) * 1.0);
+            tmp.setRevenueFeb(r.nextInt(10) * 1.0);
+            tmp.setRevenueMar(r.nextInt(10) * 1.0);
+            tmp.setRevenueApr(r.nextInt(10) * 1.0);
+            tmp.setRevenueMay(r.nextInt(10) * 1.0);
+            tmp.setRevenueJune(r.nextInt(10) * 1.0);
+            tmp.setRevenueJuly(r.nextInt(10) * 1.0);
+            listOfDatas.add(tmp);
+        }
+        mAdapter.notifyDateSetChange();
+    }
+
     public void sub(View view) {
         for (int i = 0; i < 3; i++)
             listOfDatas.remove(listOfDatas.size() - 1);

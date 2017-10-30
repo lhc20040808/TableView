@@ -1,8 +1,6 @@
 package com.lhc.test.table;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,50 +93,46 @@ public class TableAdapter extends BaseCommonTableAdapter {
         }
 
         Model model = listOfDatas.get(row);
-        Log.d("testlhc", "row:" + row + " column:" + column);
         LinearLayout ll_container = (LinearLayout) convertView.findViewById(R.id.ll_container);
-        ll_container.setBackgroundColor(column % 2 == 0 ? Color.BLUE : Color.GRAY);
         TextView textView = (TextView) convertView.findViewById(R.id.tv_content);
 
         switch (column) {
-            case 1:
+            case 0:
                 textView.setText(model.getRevenueJan() + "");
                 break;
-            case 2:
+            case 1:
                 textView.setText(model.getRevenueFeb() + "");
                 break;
-            case 3:
+            case 2:
                 textView.setText(model.getRevenueMar() + "");
                 break;
-            case 4:
+            case 3:
                 textView.setText(model.getRevenueApr() + "");
                 break;
-            case 5:
+            case 4:
                 textView.setText(model.getRevenueMay() + "");
                 break;
-            case 6:
+            case 5:
                 textView.setText(model.getRevenueJune() + "");
                 break;
-            case 7:
+            case 6:
                 textView.setText(model.getRevenueJuly() + "");
                 break;
-            case 8:
+            case 7:
                 textView.setText(model.getRevenueAug() + "");
                 break;
-            case 9:
+            case 8:
                 textView.setText(model.getRevenueSept() + "");
                 break;
-            case 10:
+            case 9:
                 textView.setText(model.getRevenueOct() + "");
                 break;
-            case 11:
+            case 10:
                 textView.setText(model.getRevenueNov() + "");
                 break;
-            case 12:
+            case 11:
                 textView.setText(model.getRevenueDec() + "");
                 break;
-
-
         }
 
         return convertView;

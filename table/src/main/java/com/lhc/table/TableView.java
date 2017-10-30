@@ -6,7 +6,6 @@ import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.support.annotation.Px;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -456,7 +455,6 @@ public class TableView extends ViewGroup {
                 int xVelocity = (int) velocityTracker.getXVelocity();
                 int yVelocity = (int) velocityTracker.getYVelocity();
                 if (Math.abs(xVelocity) > minVelocity || Math.abs(yVelocity) > minVelocity) {
-                    Log.d("testlhc", "maxScrollX:" + getMaxScrollX() + " actualScrollX:" + getActualScrollX());
                     mFling.start(getActualScrollX(), getActualScrollY(), xVelocity, yVelocity, getMaxScrollX(), getMaxScrollY());
                 }
                 break;
