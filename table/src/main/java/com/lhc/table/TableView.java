@@ -571,7 +571,7 @@ public class TableView extends ViewGroup {
         List<View> tmpList = new ArrayList<>();
         int size = nowColumn + rowViewList.size();
         for (int i = nowColumn; i < size; i++) {
-            View child = obtainViewAndAddView(row, nowColumn, widthOfColumn[nowColumn], heightOfRow[row]);
+            View child = obtainViewAndAddView(row, i, widthOfColumn[nowColumn], heightOfRow[row]);
             tmpList.add(child);
         }
         bodyViewList.add(index, tmpList);
@@ -844,9 +844,6 @@ public class TableView extends ViewGroup {
             int diffX = lastX - x;
             int diffY = lastY - y;
 
-//            Log.d("testlhc", "X:" + x + " Y:" + y);
-//            Log.d("testlhc", "lastX:" + lastX + " lastY:" + lastY);
-//            Log.d("testlhc", "diffX:" + diffX + " diffY:" + diffY);
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 diffY = 0;
             } else {

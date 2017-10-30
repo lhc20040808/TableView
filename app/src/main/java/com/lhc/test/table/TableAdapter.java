@@ -1,6 +1,8 @@
 package com.lhc.test.table;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,8 +95,9 @@ public class TableAdapter extends BaseCommonTableAdapter {
         }
 
         Model model = listOfDatas.get(row);
-
+        Log.d("testlhc", "row:" + row + " column:" + column);
         LinearLayout ll_container = (LinearLayout) convertView.findViewById(R.id.ll_container);
+        ll_container.setBackgroundColor(column % 2 == 0 ? Color.BLUE : Color.GRAY);
         TextView textView = (TextView) convertView.findViewById(R.id.tv_content);
 
         switch (column) {
