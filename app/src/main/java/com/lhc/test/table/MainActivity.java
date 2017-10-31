@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 //        listofFirstRow.add("七月收益");
 
         Model tmp = null;
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 5; i++) {
             tmp = new Model();
             tmp.setName("Name" + i);
             tmp.setDes("des" + i);
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void add(View view) {
         Model tmp = null;
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 5; i++) {
             tmp = new Model();
             tmp.setName("Name" + i);
             tmp.setDes("des" + i);

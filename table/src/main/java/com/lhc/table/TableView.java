@@ -728,8 +728,14 @@ public class TableView extends ViewGroup {
             }
 
         } else {
+            View view = columnViewList.get(columnViewList.size() - 1);
 
-            if (nowRow + columnViewList.size() == rowCount && getFilledHeight() == height) {
+            if (view == null)
+                return false;
+
+            int minHeight = Math.min(getFilledHeight(), height);
+
+            if (nowRow + columnViewList.size() == rowCount && view.getBottom() == minHeight) {
                 return false;
             } else {
                 return true;
