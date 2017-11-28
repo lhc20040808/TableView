@@ -372,7 +372,6 @@ public class TableView extends ViewGroup {
     }
 
     private void initData() {
-
         if (mAdapter == null) {
             nowColumn = 0;
             nowRow = 0;
@@ -392,7 +391,7 @@ public class TableView extends ViewGroup {
             }
         }
 
-
+        removeCallbacks(mFling);
         measureFlag = true;
         layoutFlag = true;
         removeAllViews();

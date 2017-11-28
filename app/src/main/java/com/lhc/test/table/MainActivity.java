@@ -34,21 +34,21 @@ public class MainActivity extends AppCompatActivity {
 //        listofFirstRow.add("六月收益");
 //        listofFirstRow.add("七月收益");
 
-        Model tmp = null;
-        for (int i = 0; i < 5; i++) {
-            tmp = new Model();
-            tmp.setName("Name" + i);
-            tmp.setDes("des" + i);
-            tmp.setNet(r.nextInt(10) * 1.0);
-            tmp.setRevenueJan(r.nextInt(10) * 1.0);
-            tmp.setRevenueFeb(r.nextInt(10) * 1.0);
-            tmp.setRevenueMar(r.nextInt(10) * 1.0);
-            tmp.setRevenueApr(r.nextInt(10) * 1.0);
-            tmp.setRevenueMay(r.nextInt(10) * 1.0);
-            tmp.setRevenueJune(r.nextInt(10) * 1.0);
-            tmp.setRevenueJuly(r.nextInt(10) * 1.0);
-            listOfDatas.add(tmp);
-        }
+//        Model tmp = null;
+//        for (int i = 0; i < 5; i++) {
+//            tmp = new Model();
+//            tmp.setName("Name" + i);
+//            tmp.setDes("des" + i);
+//            tmp.setNet(r.nextInt(10) * 1.0);
+//            tmp.setRevenueJan(r.nextInt(10) * 1.0);
+//            tmp.setRevenueFeb(r.nextInt(10) * 1.0);
+//            tmp.setRevenueMar(r.nextInt(10) * 1.0);
+//            tmp.setRevenueApr(r.nextInt(10) * 1.0);
+//            tmp.setRevenueMay(r.nextInt(10) * 1.0);
+//            tmp.setRevenueJune(r.nextInt(10) * 1.0);
+//            tmp.setRevenueJuly(r.nextInt(10) * 1.0);
+//            listOfDatas.add(tmp);
+//        }
 
         tableView.setAdapter(mAdapter = new TableAdapter(this, listofFirstRow, listOfDatas));
 
