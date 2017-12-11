@@ -30,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
         listofFirstRow.add("二月收益");
         listofFirstRow.add("三月收益");
         listofFirstRow.add("四月收益");
-//        listofFirstRow.add("五月收益");
-//        listofFirstRow.add("六月收益");
-//        listofFirstRow.add("七月收益");
+        listofFirstRow.add("五月收益");
+        listofFirstRow.add("六月收益");
+        listofFirstRow.add("七月收益");
 
 //        Model tmp = null;
 //        for (int i = 0; i < 5; i++) {

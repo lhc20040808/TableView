@@ -280,7 +280,7 @@ public class TableView extends ViewGroup {
 
                 //添加首列View
                 for (int i = nowRow; i < rowCount && top < height; i++) {
-                    bottom = top + heightOfRow[nowColumn];
+                    bottom = top + heightOfRow[nowRow];
                     View view = makeAndAddView(i, 0, 0, top, widthOfColumn[0], bottom);
                     columnViewList.add(view);
                     top = bottom + dividerHeight;

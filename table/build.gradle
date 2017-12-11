@@ -31,7 +31,7 @@ publish{
     userOrg = 'marcoli'
     groupId = 'com.lhc'//jcenter上的路径
     artifactId = 'TableView'//项目名称
-    publishVersion = '1.0.8'//版本号
+    publishVersion = '1.0.9'//版本号
     desc = 'A TableView for Android'//描述，不重要
     website = 'https://github.com/lhc20040808/TableView'//网站
 }
